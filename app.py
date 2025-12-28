@@ -280,7 +280,7 @@ def main():
             help="Enter any clinical text containing biomarker mentions"
         )
         
-        analyze_button = st.button("🔍 Analyze Text", type="primary", use_container_width=True)
+        analyze_button = st.button("🔍 Analyze Text", type="primary", width="stretch")
     
     with col2:
         st.subheader("Quick Examples")
@@ -293,7 +293,7 @@ def main():
         ]
         
         for i, example in enumerate(examples):
-            if st.button(f"Example {i+1}", key=f"ex_{i}", use_container_width=True):
+            if st.button(f"Example {i+1}", key=f"ex_{i}", width="stretch"):
                 st.session_state.selected_example = example
         
         if "selected_example" in st.session_state:
@@ -345,7 +345,7 @@ def main():
                               for v in x], 
                     subset=['Label']
                 )
-                st.dataframe(df_colored, use_container_width=True)
+                st.dataframe(df_colored, width="stretch")
         else:
             st.info("No biomarkers detected in the text")
         
