@@ -220,20 +220,19 @@ def main():
     
     with col1:
         st.subheader("Input Text")
-        # Pre-fill with selected example if available
-        default_value = st.session_state.get("selected_example", "")
-        if "selected_example" in st.session_state:
-            del st.session_state.selected_example
+        # Initialize text input in session state if not exists
+        if "text_input" not in st.session_state:
+            st.session_state.text_input = ""
         
         text_input = st.text_area(
             "Enter clinical text:",
-            value=default_value,
+            key="text_input",
             height=200,
             placeholder="Example: Her HER2 and IL-6 levels are elevated, indicating potential therapeutic targets.",
             help="Enter any clinical text containing biomarker mentions"
         )
         
-        analyze_button = st.button("🔍 Analyze Text", type="primary", width="stretch")
+        analyze_button = st.button("🔍 Analyze Text", type="primary", use_container_width=True)
     
     with col2:
         st.subheader("Quick Examples")
@@ -248,7 +247,7 @@ def main():
         
         for i, example in enumerate(examples):
             if st.button(example, key=f"ex_{i}", use_container_width=True):
-                st.session_state.selected_example = example
+                st.session_state.text_input = example
                 st.rerun()
     
     if analyze_button:
