@@ -3,6 +3,8 @@ torch>=2.0.0
 transformers>=4.40.0
 huggingface_hub>=0.20.0
 spacy>=3.7.0
+en_core_web_sm@https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz
 torchcrf>=1.1.0
 seqeval>=1.2.2
 pytorch-crf
+
