@@ -215,15 +215,18 @@ def main():
         if "best_f1" in config:
             st.write(f"**Best F1 Score:** {config['best_f1']:.4f}")
     
+    # Handle example selection before creating widgets
+    if "selected_example" in st.session_state:
+        if "text_input" not in st.session_state:
+            st.session_state.text_input = ""
+        st.session_state.text_input = st.session_state.selected_example
+        del st.session_state.selected_example
+    
     # Main content
     col1, col2 = st.columns([3, 2])
     
     with col1:
         st.subheader("Input Text")
-        # Initialize text input in session state if not exists
-        if "text_input" not in st.session_state:
-            st.session_state.text_input = ""
-        
         text_input = st.text_area(
             "Enter clinical text:",
             key="text_input",
@@ -247,7 +250,7 @@ def main():
         
         for i, example in enumerate(examples):
             if st.button(example, key=f"ex_{i}", use_container_width=True):
-                st.session_state.text_input = example
+                st.session_state.selected_example = example
                 st.rerun()
     
     if analyze_button:
