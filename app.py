@@ -193,68 +193,15 @@ def main():
     st.title("🧬 Biomarker Named Entity Recognition")
     st.markdown("Extract biomarkers from clinical text using BioBERT + Char-CNN + POS + CRF")
     
-    # Sidebar for model selection
-    st.sidebar.header("Model Configuration")
-    
-    model_source = st.sidebar.radio(
-        "Model Source",
-        ["Local Path", "Hugging Face Hub"]
-    )
-    
-    if model_source == "Hugging Face Hub":
-        repo_name = st.sidebar.text_input(
-            "Repository Name",
-            placeholder="username/biomarker-ner-advanced"
-        )
-        hf_token = st.sidebar.text_input(
-            "HF Token (if private)",
-            type="password",
-            help="Get token from https://huggingface.co/settings/tokens"
-        )
-        model_path = None
-    else:
-        model_path = st.sidebar.text_input(
-            "Model Path",
-            value="../model_training/output_advanced/final_model",
-            help="Path to local model directory"
-        )
-        repo_name = None
-        hf_token = None
-    
-    # Load model button
-    if st.sidebar.button("Load Model", type="primary"):
-        try:
-            if model_source == "Hugging Face Hub":
-                if not repo_name:
-                    st.sidebar.error("Please enter repository name")
-                    st.stop()
-                st.session_state.model_data = load_model_from_hf(
-                    repo_name,
-                    hf_token if hf_token else None
-                )
-            else:
-                if not model_path:
-                    st.sidebar.error("Please enter model path")
-                    st.stop()
-                st.session_state.model_data = load_model_local(model_path)
-            st.sidebar.success("✓ Model loaded successfully!")
-        except Exception as e:
-            st.sidebar.error(f"Error loading model: {e}")
-            st.stop()
-    
-    # Check if model is loaded
+    # Auto-load model from Hugging Face
     if "model_data" not in st.session_state:
-        st.info("👈 Please load a model from the sidebar to get started")
-        st.markdown("---")
-        st.markdown("### Example Usage:")
-        st.markdown("""
-        1. Choose model source (Local or Hugging Face Hub)
-        2. Enter model path or repository name
-        3. Click 'Load Model'
-        4. Enter clinical text in the input box
-        5. View extracted biomarkers
-        """)
-        st.stop()
+        with st.spinner("Loading model from Hugging Face..."):
+            try:
+                st.session_state.model_data = load_model_from_hf("Postlyt/biomarker-ner-advanced", None)
+                st.success("✓ Model loaded successfully!")
+            except Exception as e:
+                st.error(f"Error loading model: {e}")
+                st.stop()
     
     model, tokenizer, config, pos_tagger, device = st.session_state.model_data
     
@@ -285,15 +232,16 @@ def main():
     with col2:
         st.subheader("Quick Examples")
         examples = [
-            "Her HER2 levels are elevated",
             "The IL-6, HER2, and EGFR biomarkers showed significant changes",
             "Increased insulin sensitivity index was observed",
             "Patient has high glucose and elevated hemoglobin A1c",
-            "L-dopa onset time improved after treatment"
+            "L-dopa onset time improved after treatment",
+            "Her HER2 levels are elevated",
+            "PD-L1 expression was high in tumor cells"
         ]
         
         for i, example in enumerate(examples):
-            if st.button(f"Example {i+1}", key=f"ex_{i}", width="stretch"):
+            if st.button(example, key=f"ex_{i}", use_container_width=True):
                 st.session_state.selected_example = example
         
         if "selected_example" in st.session_state:
@@ -357,7 +305,8 @@ def main():
     st.markdown("---")
     st.markdown(
         "Built with BioBERT + Char-CNN + POS + CRF | "
-        "[Model Training Code](https://github.com/your-repo)"
+        "[Model Training Code](https://github.com/Shubh789da/biomarker_ner) | "
+        "[Hugging Face Model](https://huggingface.co/Postlyt/biomarker-ner-advanced)"
     )
 
 
