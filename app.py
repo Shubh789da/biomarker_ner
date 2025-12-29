@@ -23,7 +23,12 @@ except ImportError:
     st.error("Please install transformers: pip install transformers torch")
     st.stop()
 
-st.set_page_config(initial_sidebar_state="collapsed")
+st.set_page_config(
+    page_title="Biomarker NER",
+    page_icon="🧬",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
 @st.cache_resource
 def load_model_from_hf(repo_name: str, token: str = None):
@@ -185,12 +190,6 @@ def highlight_biomarkers(text: str, biomarkers: list[str]) -> str:
 
 
 def main():
-    st.set_page_config(
-        page_title="Biomarker NER",
-        page_icon="🧬",
-        layout="wide"
-    )
-    
     st.title("🧬 Biomarker Named Entity Recognition")
     st.markdown("Extract biomarkers from clinical text using BioBERT + Char-CNN + POS + CRF")
     
