@@ -23,6 +23,7 @@ except ImportError:
     st.error("Please install transformers: pip install transformers torch")
     st.stop()
 
+st.set_page_config(initial_sidebar_state="collapsed")
 
 @st.cache_resource
 def load_model_from_hf(repo_name: str, token: str = None):
@@ -220,8 +221,14 @@ def main():
     
     with col1:
         st.subheader("Input Text")
+        # Pre-fill with selected example if available
+        default_value = st.session_state.get("selected_example", "")
+        if "selected_example" in st.session_state:
+            del st.session_state.selected_example
+        
         text_input = st.text_area(
             "Enter clinical text:",
+            value=default_value,
             height=200,
             placeholder="Example: Her HER2 and IL-6 levels are elevated, indicating potential therapeutic targets.",
             help="Enter any clinical text containing biomarker mentions"
@@ -243,11 +250,9 @@ def main():
         for i, example in enumerate(examples):
             if st.button(example, key=f"ex_{i}", use_container_width=True):
                 st.session_state.selected_example = example
-        
-        if "selected_example" in st.session_state:
-            text_input = st.session_state.selected_example
+                st.rerun()
     
-    if analyze_button or "selected_example" in st.session_state:
+    if analyze_button:
         if not text_input.strip():
             st.warning("Please enter some text to analyze")
             st.stop()
@@ -296,10 +301,6 @@ def main():
                 st.dataframe(df_colored, width="stretch")
         else:
             st.info("No biomarkers detected in the text")
-        
-        # Clear example selection
-        if "selected_example" in st.session_state:
-            del st.session_state.selected_example
     
     # Footer
     st.markdown("---")
